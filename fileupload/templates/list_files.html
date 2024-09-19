@@ -1,0 +1,10 @@
+<!-- list_files.html -->
+
+<h2>Uploaded Files</h2>
+<ul>
+    {% for document in documents %}
+    <li>
+        <a href="{{ document.file.url }}" target="_blank">{{ document.file.name }}</a>
+    </li>
+    {% endfor %}
+</ul>
