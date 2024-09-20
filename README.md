@@ -30,6 +30,7 @@ Create a super user for test purposes: `python manage.py createsuperuser`
 ## Easy commands
 ```
     awslocal s3api create-bucket --bucket "django-localstack"
+    localstack status services
 ```
 
 
