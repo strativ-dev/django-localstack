@@ -2,8 +2,6 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv(".env")
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "django-insecure-_t^dho6=39_9(z+^)zbwoth*p(xnin9p^b2!(8qlvzioll84!7"
@@ -105,18 +103,19 @@ STORAGES = {
 }
 
 AWS_STORAGE_BUCKET_NAME = "django-localstack"
+AWS_S3_FILE_OVERWRITE = True
+# AWS_S3_REGION_NAME = "us-east-1"
+# AWS_S3_SIGNATURE_VERSION = "s3v4"
+# AWS_QUERYSTRING_AUTH = False  # Disable signed URLs for public access (optional)
+# AWS_DEFAULT_ACL = None
 
-# Local-only settings
-AWS_ACCESS_KEY_ID = "test"
-AWS_SECRET_ACCESS_KEY = "test"
-AWS_S3_ENDPOINT_URL = "http://localhost:4566"
+
+# # Local-only settings
+# AWS_ACCESS_KEY_ID = "test"
+# AWS_SECRET_ACCESS_KEY = "test"
+# AWS_S3_ENDPOINT_URL = "http://localhost:4566"
 
 # Deployment-only settings
+# load_dotenv(".env")
 # AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 # AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
-
-AWS_S3_SIGNATURE_VERSION = "s3v4"
-AWS_S3_REGION_NAME = "us-east-1"
-# AWS_DEFAULT_ACL = None
-AWS_S3_FILE_OVERWRITE = False
-# AWS_QUERYSTRING_AUTH = False  # Disable signed URLs for public access (optional)

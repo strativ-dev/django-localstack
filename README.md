@@ -31,6 +31,7 @@ Create a super user for test purposes: `python manage.py createsuperuser`
 ```
     awslocal s3api create-bucket --bucket "django-localstack"
     localstack status services
+    awslocal s3api list-objects --bucket django-localstack
 
     docker network create django-localstack
     docker network connect django-localstack localstack-main
