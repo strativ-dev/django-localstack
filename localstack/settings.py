@@ -119,32 +119,29 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 STATIC_ROOT = BASE_DIR / "static"
 STATIC_URL = f"http://localhost:4566/mybucket/static/"
-staticfiles_storage = "storages.backends.s3boto3.S3Boto3Storage"
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "http://localhost:4566/mybucket/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-AWS_ACCESS_KEY_ID = "test"  # Use default LocalStack credentials
-AWS_SECRET_ACCESS_KEY = "test"
-AWS_STORAGE_BUCKET_NAME = "mybucket"  # Name of your S3 bucket
-AWS_S3_ENDPOINT_URL = "http://localhost:4566"
-AWS_S3_REGION_NAME = "us-east-1"  # Can be any region
-AWS_S3_SIGNATURE_VERSION = "s3v4"
-AWS_S3_FILE_OVERWRITE = False
-AWS_DEFAULT_ACL = None  # Important for proper permissions handling
-
-
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "http://localhost:4566/mybucket/"
 STORAGES = {
-    # Storage for user-uploaded files (media)
     "default": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
     },
-    # Storage for static files
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",  # For local static file handling
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
+
+AWS_ACCESS_KEY_ID = "test"
+AWS_SECRET_ACCESS_KEY = "test"
+AWS_STORAGE_BUCKET_NAME = "mybucket"
+AWS_S3_ENDPOINT_URL = "http://localhost:4566"
+AWS_S3_REGION_NAME = "us-east-1"
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_DEFAULT_ACL = None
+AWS_S3_FILE_OVERWRITE = False
+AWS_QUERYSTRING_AUTH = False  # Disable signed URLs for public access (optional)

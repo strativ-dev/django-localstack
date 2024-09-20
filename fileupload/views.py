@@ -1,43 +1,51 @@
-# upload/views.py
-import boto3
+import logging
+
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
+
 from .forms import DocumentForm
 from .models import Document
-
-
-import logging
+from .utils import get_s3_client
 
 logger = logging.getLogger(__name__)
-
-
-import logging
-from django.http import HttpResponse
-from .forms import DocumentForm
-
-logger = logging.getLogger(__name__)
-
-from django.core.files.storage import default_storage
 
 
 def upload_file(request):
+    """Handle file upload, save to S3 with correct Content-Type, and log the operation."""
     if request.method == "POST":
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
             file = request.FILES["file"]
-            s3 = boto3.client("s3", endpoint_url="http://localhost:4566/")
-            s3.put_object(Bucket="mybucket", Key=file.name, Body=file)
-            document = form.save()
-            print(default_storage.__class__)
-            logger.info(f"File uploaded: {document.file.name}")
-            print(f"File uploaded: {document.file.name}")
-            logger.info(f"File path: {document.file.path}")
-            logger.info(f"File URL: {document.file.url}")
-            return redirect("upload_success")
+            try:
+                # Upload file to S3 with Content-Type
+                s3 = get_s3_client()
+
+                # Set the correct Content-Type based on the file
+                content_type = file.content_type
+
+                s3.put_object(
+                    Bucket="mybucket",
+                    Key=file.name,
+                    Body=file,
+                    ContentType=content_type,  # Ensure correct Content-Type
+                    ACL="public-read",  # Ensure the file is publicly accessible
+                )
+
+                # Save metadata in the database (not the file itself)
+                document = Document.objects.create(file=file.name)
+
+                logger.info(f"File uploaded to S3: {document.file.name}")
+
+                return redirect("upload_success")
+            except Exception as e:
+                logger.error(f"Error uploading file to S3: {e}")
+                return HttpResponse(f"File upload failed: {e}", status=500)
         else:
             logger.error("Form is invalid.")
-            print("Form is invalid.")
-    else:
-        form = DocumentForm()
+            return HttpResponse("Form is invalid.", status=400)
+
+    # If not POST, render the empty form
+    form = DocumentForm()
     return render(request, "fileupload.html", {"form": form})
 
 
