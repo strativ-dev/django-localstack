@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-_t^dho6=39_9(z+^)zbwoth*p(xnin9p^b2!(8qlvzioll84!7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "storages",
-    "fileupload",
+    "cabinet",
 ]
 
 MIDDLEWARE = [
@@ -52,7 +52,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "localstack.urls"
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
@@ -70,7 +70,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "localstack.wsgi.application"
+WSGI_APPLICATION = "config.wsgi.application"
 
 
 # Database
@@ -117,31 +117,35 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
+STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "static"
-STATIC_URL = f"http://localhost:4566/mybucket/static/"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "http://localhost:4566/mybucket/"
-
+MEDIA_URL = "http://localhost:4566/django-localstack/"
+# MEDIA_URL = "/media/"
+# MEDIA_ROOT = BASE_DIR / "media"
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "LOCATION": "media",
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "LOCATION": "static",
     },
 }
 
+
 AWS_ACCESS_KEY_ID = "test"
 AWS_SECRET_ACCESS_KEY = "test"
-AWS_STORAGE_BUCKET_NAME = "mybucket"
 AWS_S3_ENDPOINT_URL = "http://localhost:4566"
-AWS_S3_REGION_NAME = "us-east-1"
 AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_STORAGE_BUCKET_NAME = "django-localstack"
+AWS_S3_REGION_NAME = "us-east-1"
 AWS_DEFAULT_ACL = None
 AWS_S3_FILE_OVERWRITE = False
 AWS_QUERYSTRING_AUTH = False  # Disable signed URLs for public access (optional)
