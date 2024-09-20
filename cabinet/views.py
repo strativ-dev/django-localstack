@@ -11,11 +11,17 @@ logger = logging.getLogger(__name__)
 
 
 def upload_file(request):
-    """Handle file upload, save to S3 with correct Content-Type, and log the operation."""
+    """Handle file upload, save to S3 in a specific directory with correct Content-Type, and log the operation."""
     if request.method == "POST":
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
-            file = request.FILES["file"]
+            # Safely access the file using .get() to avoid MultiValueDictKeyError
+            file = request.FILES.get("document")
+
+            if not file:
+                logger.error("No file uploaded.")
+                return HttpResponse("No file uploaded.", status=400)
+
             try:
                 # Upload file to S3 with Content-Type
                 s3 = get_s3_client()
@@ -23,18 +29,22 @@ def upload_file(request):
                 # Set the correct Content-Type based on the file
                 content_type = file.content_type
 
+                # Define the directory path in S3 (e.g., 'uploads/')
+                directory_path = "documents/"  # You can change this to any desired directory
+
+                # Upload file to S3 in the specified directory
                 s3.put_object(
-                    Bucket="mybucket",
-                    Key=file.name,
+                    Bucket="django-localstack",
+                    Key=f"{directory_path}{file.name}",  # File is uploaded to 'uploads/<filename>'
                     Body=file,
                     ContentType=content_type,  # Ensure correct Content-Type
                     ACL="public-read",  # Ensure the file is publicly accessible
                 )
 
                 # Save metadata in the database (not the file itself)
-                document = Document.objects.create(file=file.name)
+                document = Document.objects.create(document=f"{directory_path}{file.name}")
 
-                logger.info(f"File uploaded to S3: {document.file.name}")
+                logger.info(f"File uploaded to S3: {document.document}")
 
                 return redirect("upload_success")
             except Exception as e:
