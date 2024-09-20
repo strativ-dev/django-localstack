@@ -31,19 +31,27 @@ Create a super user for test purposes: `python manage.py createsuperuser`
 ```
     awslocal s3api create-bucket --bucket "django-localstack"
     localstack status services
-```
 
+    docker network create django-localstack
+    docker network connect django-localstack localstack-main
+
+    docker build . -t django-localstack --load && \
+    docker run --network django-localstack -p 8000:8000 \
+    -v $(pwd):/code/ -t django-localstack
+
+    docker network connect django-localstack django-localstack
+```
 
 
 ## Topics to cover
 1. What happens without cloud storage?
-* Gets stored in local file storage or wherever you point it.
-* Replaces creates new stuff
-* Deletes don't delete the actual file
+    - Gets stored in local file storage or wherever you point it.
+    - Replaces creates new stuff
+    - Deletes don't delete the actual file
 
 2. Demonstrate how to configure LocalStack for the project.
+    - It's very easy.
 
 3. Demonstrate how to serve static files using cloud storage.
-- There are optimizations to be made here, but it is what it is.
-- Make Debug=False
-
+    - There are optimizations to be made here, but it is what it is.
+    - Make Debug=False

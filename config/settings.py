@@ -1,5 +1,8 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv(".env")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -88,9 +91,7 @@ STATIC_ROOT = BASE_DIR / "static"
 STATIC_URL = "static/"
 
 MEDIA_ROOT = BASE_DIR / "media"
-
-# MEDIA_URL = "http://localhost:4566/django-localstack/"
-# MEDIA_URL = "/media/"
+MEDIA_URL = "media/"
 
 STORAGES = {
     "default": {
@@ -106,13 +107,13 @@ STORAGES = {
 AWS_STORAGE_BUCKET_NAME = "django-localstack"
 
 # Local-only settings
-# AWS_ACCESS_KEY_ID = "test"
-# AWS_SECRET_ACCESS_KEY = "test"
-# AWS_S3_ENDPOINT_URL = "http://localhost:4566"
+AWS_ACCESS_KEY_ID = "test"
+AWS_SECRET_ACCESS_KEY = "test"
+AWS_S3_ENDPOINT_URL = "http://localhost:4566"
 
 # Deployment-only settings
-AWS_ACCESS_KEY_ID = ""
-AWS_SECRET_ACCESS_KEY = ""
+# AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+# AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_S3_REGION_NAME = "us-east-1"

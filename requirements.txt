@@ -5,6 +5,7 @@ django-storages[s3]==1.14.4
 pytest-django==4.9.0
 Pillow==10.4.0
 moto[s3]==5.0.14
+python-dotenv==1.0.1
 
 # Nice to have
 ruff==0.6.5
