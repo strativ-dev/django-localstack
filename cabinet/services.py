@@ -1,6 +1,8 @@
-import boto3
-from .models import Document
 import logging
+
+import boto3
+
+from .models import Document
 
 logger = logging.getLogger(__name__)
 
