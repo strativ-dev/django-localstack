@@ -3,6 +3,7 @@ import logging
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
+from django.views.generic import TemplateView, ListView
 
 from .forms import DocumentForm
 from .models import Document
@@ -39,13 +40,15 @@ class FileUploadView(View):
             return HttpResponse("Form is invalid.", status=400)
 
 
-def upload_success(request):
-    return render(request, "cabinet/fileupload_success.html")
+class UploadSuccessView(TemplateView):
+    """Renders the upload success page."""
+
+    template_name = "cabinet/fileupload_success.html"
 
 
-def list_files(request):
-    documents = Document.objects.all()
-    return render(request, "cabinet/list_files.html", {"documents": documents})
+class DocumentListView(ListView):
+    """Displays a list of all uploaded documents."""
 
-
-# Create your views here.
+    model = Document
+    template_name = "cabinet/list_files.html"
+    context_object_name = "documents"
