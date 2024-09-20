@@ -2,20 +2,25 @@ import logging
 
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.views import View
 
 from .forms import DocumentForm
 from .models import Document
-from .utils import get_s3_client
+from .services import FileUploadService
 
 logger = logging.getLogger(__name__)
 
 
-def upload_file(request):
-    """Handle file upload, save to S3 in a specific directory with correct Content-Type, and log the operation."""
-    if request.method == "POST":
+class FileUploadView(View):
+    """Handle file upload using a class-based view."""
+
+    def get(self, request):
+        form = DocumentForm()
+        return render(request, "cabinet/fileupload.html", {"form": form})
+
+    def post(self, request):
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
-            # Safely access the file using .get() to avoid MultiValueDictKeyError
             file = request.FILES.get("document")
 
             if not file:
@@ -23,49 +28,24 @@ def upload_file(request):
                 return HttpResponse("No file uploaded.", status=400)
 
             try:
-                # Upload file to S3 with Content-Type
-                s3 = get_s3_client()
-
-                # Set the correct Content-Type based on the file
-                content_type = file.content_type
-
-                # Define the directory path in S3 (e.g., 'uploads/')
-                directory_path = "documents/"  # You can change this to any desired directory
-
-                # Upload file to S3 in the specified directory
-                s3.put_object(
-                    Bucket="django-localstack",
-                    Key=f"{directory_path}{file.name}",  # File is uploaded to 'uploads/<filename>'
-                    Body=file,
-                    ContentType=content_type,  # Ensure correct Content-Type
-                    ACL="public-read",  # Ensure the file is publicly accessible
-                )
-
-                # Save metadata in the database (not the file itself)
-                document = Document.objects.create(document=f"{directory_path}{file.name}")
-
-                logger.info(f"File uploaded to S3: {document.document}")
-
+                # Move the file handling logic to a service
+                FileUploadService.upload_to_s3(file)
                 return redirect("upload_success")
             except Exception as e:
-                logger.error(f"Error uploading file to S3: {e}")
+                logger.error(f"Error uploading file: {e}")
                 return HttpResponse(f"File upload failed: {e}", status=500)
         else:
             logger.error("Form is invalid.")
             return HttpResponse("Form is invalid.", status=400)
 
-    # If not POST, render the empty form
-    form = DocumentForm()
-    return render(request, "fileupload.html", {"form": form})
-
 
 def upload_success(request):
-    return render(request, "fileupload_success.html")
+    return render(request, "cabinet/fileupload_success.html")
 
 
 def list_files(request):
     documents = Document.objects.all()
-    return render(request, "list_files.html", {"documents": documents})
+    return render(request, "cabinet/list_files.html", {"documents": documents})
 
 
 # Create your views here.

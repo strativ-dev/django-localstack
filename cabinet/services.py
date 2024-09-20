@@ -9,7 +9,7 @@ class FileUploadService:
     @staticmethod
     def get_s3_client():
         # Assuming you have AWS credentials configured for boto3
-        return boto3.client("s3")
+        return boto3.client("s3", endpoint_url="http://localhost:4566/")
 
     @staticmethod
     def upload_to_s3(file):
