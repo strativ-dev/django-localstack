@@ -8,6 +8,7 @@ to connect cloud storage to:
 4. Access secure content via pre-signed URLs
 5. Show-case large file handling
 6. Writing unit tests using Moto
+7. CloudFront pre-signed URLs - https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#cloudfront-signed-urls
 
 
 ## Introduction

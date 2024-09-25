@@ -1,6 +1,8 @@
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+from dotenv import load_dotenv
+import os
 
 SECRET_KEY = "django-insecure-_t^dho6=39_9(z+^)zbwoth*p(xnin9p^b2!(8qlvzioll84!7"
 
@@ -90,16 +92,16 @@ STATIC_URL = "static/"
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "media/"
 
-# STORAGES = {
-#     "default": {
-#         "BACKEND": "storages.backends.s3.S3Storage",
-#         "LOCATION": "media",
-#     },
-#     "staticfiles": {
-#         "BACKEND": "storages.backends.s3.S3Storage",
-#         "LOCATION": "static",
-#     },
-# }
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "LOCATION": "media",
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "LOCATION": "static",
+    },
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
@@ -109,11 +111,13 @@ REST_FRAMEWORK = {
 }
 
 AWS_STORAGE_BUCKET_NAME = "django-localstack"
-AWS_S3_FILE_OVERWRITE = True
-# AWS_S3_REGION_NAME = "us-east-1"
-# AWS_S3_SIGNATURE_VERSION = "s3v4"
-# AWS_QUERYSTRING_AUTH = False  # Disable signed URLs for public access (optional)
-# AWS_DEFAULT_ACL = None
+
+
+AWS_S3_FILE_OVERWRITE = False
+AWS_S3_REGION_NAME = "us-east-1"
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_QUERYSTRING_AUTH = True  # Disable signed URLs for public access (optional)
+AWS_DEFAULT_ACL = None
 
 
 # # Local-only settings
@@ -122,6 +126,12 @@ AWS_S3_FILE_OVERWRITE = True
 # AWS_S3_ENDPOINT_URL = "http://localhost:4566"
 
 # Deployment-only settings
-# load_dotenv(".env")
-# AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
-# AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+load_dotenv(".env")
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+
+
+# CloudFront Settings
+AWS_S3_CUSTOM_DOMAIN="dxzdtxary8h1s.cloudfront.net"
+AWS_CLOUDFRONT_KEY=os.environ.get("AWS_CLOUDFRONT_KEY")
+AWS_CLOUDFRONT_KEY_ID="K313YR094LV0UR"
